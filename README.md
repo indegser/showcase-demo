@@ -8,4 +8,4 @@
 
 3. Run ffmpeg video to image-series command
 
-`ffmpeg -i [video_name].mov -vf scale=1280:-1 ~/cuts/image%06d.png`
+`ffmpeg -i [video_name].mov -vf scale=1280:-1 -r 60 ~/cuts/image%06d.png`

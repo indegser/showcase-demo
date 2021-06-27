@@ -1,15 +1,12 @@
 import styled from "@emotion/styled";
 import { useEffect, useRef } from "react";
-import { useScroll } from "react-use-gesture";
 import { useRafLoop } from "react-use";
 import useMeasure from "react-use-measure";
 import mergeRefs from "react-merge-refs";
 import { usePreloadImages } from "./Cartier.hooks";
 import { useCallback } from "react";
 
-const frameCount = 109;
-const imageWidth = 1280;
-const imageHeight = 688;
+const frameCount = 328;
 
 interface Props {
   frameCount: number;
@@ -25,72 +22,51 @@ export const Cartier = (props: Props) => {
   const currentFrame = (index: number) =>
     `/cook/cuts/image${index.toString().padStart(6, "0")}.png`;
 
-  const images = usePreloadImages(frameCount, currentFrame);
+  const { frames, ...frameState } = usePreloadImages(frameCount, currentFrame);
 
-  const drawImage = useCallback(
-    (image: HTMLImageElement | undefined) => {
+  const drawFrame = useCallback(
+    (frameIndex: number) => {
       const context = ref.current?.getContext("2d");
-      if (context == null || image == null) return;
+      if (context == null) return;
 
+      const frame = frames.get(frameIndex.toString())
+
+      if (!frameState.loaded || frame == null) {
+        console.warn(`Cannot render frame at ${frameIndex}`)
+        return;
+      }
+
+      const { width, height } = frameState;
       const scale = Math.max(
-        bound.width / imageWidth,
-        bound.height / imageHeight
+        bound.width / width,
+        bound.height / height
       );
 
       // get the top left position of the image
-      const x = bound.width / 2 - (imageWidth / 2) * scale;
-      const y = bound.height / 2 - (imageHeight / 2) * scale;
+      const x = bound.width / 2 - (width / 2) * scale;
+      const y = bound.height / 2 - (height / 2) * scale;
 
-      context.drawImage(image, x, y, imageWidth * scale, imageHeight * scale);
+      context.drawImage(frame, x, y, width * scale, height * scale);
     },
-    [bound]
+    [bound, frames, frameState]
   );
 
-  const updateImage = (index: number) => {
-    const canvas = ref.current!;
-    const context = canvas.getContext("2d");
-    if (context == null) return;
-
-    const scale = Math.max(
-      canvas.offsetWidth / imageWidth,
-      canvas.offsetHeight / imageHeight
-    );
-
-    // get the top left position of the image
-    const x = canvas.offsetWidth / 2 - (imageWidth / 2) * scale;
-    const y = canvas.offsetHeight / 2 - (imageHeight / 2) * scale;
-
-    const imageAtIndex = images.get(index.toString());
-
-    if (imageAtIndex == null) return;
-
-    context.drawImage(
-      imageAtIndex,
-      x,
-      y,
-      imageWidth * scale,
-      imageHeight * scale
-    );
-  };
-
   useEffect(() => {
-    if (bound.width === 0) return;
-    const image = images.get(indexRef.current.next.toString());
-
-    drawImage(image);
-  }, [drawImage, bound.width, images]);
+    if (bound.width === 0 || !frameState.loaded) return;
+    drawFrame(indexRef.current.next);
+  }, [drawFrame, bound.width, frameState.loaded]);
 
   useRafLoop(() => {
     const { prev, next } = indexRef.current!;
     if (next === prev) return;
 
-    const nextPrev = next > prev ? prev + 1 : prev - 1;
+    const delta = Math.max(1, Math.log(Math.abs(next - prev)))
+    const nextPrev = Math.round(next > prev ? prev + delta : prev - delta);
     indexRef.current.prev = nextPrev;
-    updateImage(nextPrev);
+    drawFrame(nextPrev);
   }, true);
 
   const handleScroll = useCallback(() => {
-    console.log("called?");
     const html = document.documentElement;
     const scrollTop = html.scrollTop;
     const maxScrollTop = html.scrollHeight - window.innerHeight;
@@ -112,7 +88,7 @@ export const Cartier = (props: Props) => {
   }, [handleScroll]);
 
   return (
-    <div style={{ minHeight: "300vh" }}>
+    <div style={{ minHeight: "500vh" }}>
       <Canvas
         ref={mergeRefs([ref, measureRef])}
         width={bound.width}
