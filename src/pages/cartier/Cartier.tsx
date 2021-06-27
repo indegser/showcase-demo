@@ -6,7 +6,7 @@ import mergeRefs from "react-merge-refs";
 import { usePreloadImages } from "./Cartier.hooks";
 import { useCallback } from "react";
 
-const frameCount = 328;
+const frameCount = 166;
 
 interface Props {
   frameCount: number;
