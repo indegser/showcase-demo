@@ -35,7 +35,7 @@ const Container = styled(motion.div)`
 const Content = styled.div`
   top: 0;
   position: absolute;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.48;
   font-weight: 600;
   letter-spacing: 0.012em;

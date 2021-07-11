@@ -49,7 +49,7 @@ export const Hero = () => {
             src="/images/audio.jpeg"
             style={{ width: 500, marginLeft: -200, height: "auto" }}
           />
-          <div style={{ position: "relative", height: 200 }}>
+          <div style={{ position: "relative", height: 240 }}>
             {paras.map((para, i) => (
               <SonyPara key={para.title} {...para} index={i} diff={diff} />
             ))}
@@ -64,15 +64,10 @@ export const Hero = () => {
 const Parallax = styled.div``;
 
 const Before = styled.div`
-  /* height: calc(
-    (var(--fade-distance) + var(--is-visible-distance) + var(--fade-distance)) *
-      3
-  ); */
-
   h1 {
     font-size: 56px;
     line-height: 1.07143;
-    font-weight: 640;
+    font-weight: 800;
     letter-spacing: -0.003em;
     margin: 0;
     margin-top: 10px;
@@ -80,9 +75,9 @@ const Before = styled.div`
   }
 
   p {
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1.51053;
-    font-weight: 600;
+    font-weight: 720;
     letter-spacing: 0.012em;
   }
 `;
