@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { motion, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { SonyPara } from "pages/sony/SonyPara";
-import { useEffect } from "react";
 import { useIntersection } from "./useIntersection";
 
 const paras = [
@@ -22,13 +21,8 @@ const paras = [
   },
 ];
 
-const FADE_DISTANCE = 100;
-const VISIBLE_DISTANCE = 200;
-
 export const Hero = () => {
-  const opacity = useSpring(0);
-  const y = useSpring(0);
-  const [ref, diff] = useIntersection(opacity, y);
+  const [ref, diff] = useIntersection();
 
   return (
     <Container>

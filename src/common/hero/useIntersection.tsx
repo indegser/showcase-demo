@@ -1,10 +1,7 @@
-import { MotionValue, useSpring, useViewportScroll } from "framer-motion";
+import { useSpring, useViewportScroll } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-export const useIntersection = (
-  opacity: MotionValue<number>,
-  y: MotionValue<number>
-) => {
+export const useIntersection = () => {
   const diff = useSpring(0, {
     mass: 0.1,
     bounce: 0,
@@ -49,5 +46,5 @@ export const useIntersection = (
     };
   }, [visible, scrollY, diff]);
 
-  return [ref, diff];
+  return [ref, diff] as const;
 };
